@@ -132,7 +132,7 @@ import puppeteer from "puppeteer";
     };
     console.log(bike);
     bikes.push(bike);
-    await page.screenshot({ path: `screenshot${index}.png` });
+    await page.screenshot({ path: `./screenshots/screenshot${index}.png` });
   }
 
   await browser.close();
