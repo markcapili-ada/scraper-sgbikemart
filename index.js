@@ -332,10 +332,6 @@ async function scraperProcess(page, browser, pageNum, domain) {
 }
 
 async function addBikeToSheet(values) {
-  const credentialsPath = "credentials.json";
-  const tokenPath = "token.json";
-  const spreadsheetId = "1vhIxaHDq15uLbBlTCUEy1lm8uZULBUdKwgyqgquBGJA"; // Replace with your spreadsheet ID
-
   const googleSheets = new GoogleSheetsAPI();
 
   // Define the range and values you want to append
