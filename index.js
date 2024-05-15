@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import GoogleSheetsAPI from "./GoogleSheetsAPI.js";
-
+const googleSheets = new GoogleSheetsAPI();
 var BIKES = [];
 (async () => {
   // Launch the browser and open a new blank page
@@ -14,20 +14,30 @@ var BIKES = [];
 
   try {
     // MAIN LOOP
-    fs.readFile("bikes.json", "utf8", (err, data) => {
-      if (err) {
-        console.error("Error reading JSON file:", err);
-        return;
-      }
+    const lastRow = await googleSheets.getLastRow("data");
+    var allData = await googleSheets.getAllData(`data!A2:P${lastRow}`);
 
-      if (data) {
-        BIKES = JSON.parse(data);
-        // console.log(BIKES);
-      } else {
-        console.log("JSON file is empty");
-      }
+    BIKES = allData.map((bike) => {
+      return {
+        id: bike[0],
+        bikeName: bike[1],
+        listingType: bike[2],
+        brand: bike[3],
+        engineCapacity: bike[4],
+        classification: bike[5],
+        regDate: bike[6],
+        COEexpiryDate: bike[7],
+        milleage: bike[8],
+        noOfOwners: bike[9],
+        typeOfVehicle: bike[10],
+        price: bike[11],
+        permalink: bike[12],
+        postedOn: bike[13],
+        address: bike[14],
+        contacts: JSON.parse(bike[15]),
+      };
     });
-
+    console.log(BIKES);
     for (let pageNum = 1; pageNum <= 30; pageNum++) {
       let success = false;
 
@@ -99,7 +109,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-body.p-0 > div > table > tbody > tr:nth-child(5) > td.value > a";
   var regDate =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-body.p-0 > div > table > tbody > tr:nth-child(6) > td.value";
-  var CEOexpiryDate =
+  var COEexpiryDate =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-body.p-0 > div > table > tbody > tr:nth-child(7) > td.value";
   var milleage =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-body.p-0 > div > table > tbody > tr:nth-child(8) > td.value";
@@ -186,9 +196,9 @@ async function scraperProcess(page, browser, pageNum, domain) {
           (element) => element.textContent
         );
 
-        await page.waitForSelector(CEOexpiryDate);
-        var CEOexpiryDateData = await page.$eval(
-          CEOexpiryDate,
+        await page.waitForSelector(COEexpiryDate);
+        var COEexpiryDateData = await page.$eval(
+          COEexpiryDate,
           (element) => element.textContent
         );
 
@@ -274,7 +284,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
           engineCapacity: engineCapacityData,
           classification: classificationData.replace(/\n/g, ""),
           regDate: regDateData.replace(/\n/g, ""),
-          CEOexpiryDate: CEOexpiryDateData.replace(/\n/g, ""),
+          COEexpiryDate: COEexpiryDateData.replace(/\n/g, ""),
           milleage: milleageData,
           noOfOwners: noOfOwnersData.replace(/\n/g, ""),
           typeOfVehicle: typeOfVehicleData.replace(/\n/g, ""),
@@ -297,7 +307,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
               bike.engineCapacity,
               bike.classification,
               bike.regDate,
-              bike.CEOexpiryDate.match(/\d{2}\/\d{2}\/\d{4}/)[0],
+              bike.COEexpiryDate.match(/\d{2}\/\d{2}\/\d{4}/)[0],
               bike.milleage,
               bike.noOfOwners,
               bike.typeOfVehicle,
@@ -311,13 +321,6 @@ async function scraperProcess(page, browser, pageNum, domain) {
           // await page.screenshot({
           //   path: `./screenshots/screenshot-${pageNum}-${index + 1}.png`,
           // });
-          fs.writeFile("bikes.json", JSON.stringify(BIKES), (err) => {
-            if (err) {
-              console.error("Error writing JSON file:", err);
-            } else {
-              console.log("Bikes data saved to bikes.json");
-            }
-          });
         } else {
           console.log("Bike already exists in the database 2");
         }
@@ -332,11 +335,8 @@ async function scraperProcess(page, browser, pageNum, domain) {
 }
 
 async function addBikeToSheet(values) {
-  const googleSheets = new GoogleSheetsAPI();
-
   // Define the range and values you want to append
   const range = "data";
-
   // Append the data to the sheet
   googleSheets.addData(range, values);
 }

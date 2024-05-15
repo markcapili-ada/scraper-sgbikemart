@@ -122,30 +122,71 @@ class GoogleSheetsAPI {
       this.appendData(auth, range, values);
     });
   }
+
+  // Function to get all data from the sheet
+  getAllData(range) {
+    return new Promise((resolve, reject) => {
+      this.loadAndAuthorize((auth) => {
+        const sheets = google.sheets({ version: "v4", auth });
+        sheets.spreadsheets.values.get(
+          {
+            spreadsheetId: this.spreadsheetId,
+            range: range,
+          },
+          (err, res) => {
+            if (err) reject("The API returned an error: " + err);
+            const rows = res.data.values;
+            if (rows.length) {
+              resolve(rows);
+            } else {
+              resolve([]);
+            }
+          }
+        );
+      });
+    });
+  }
+
+  // Function to get the last row of data in the sheet
+  getLastRow(sheetName) {
+    return new Promise((resolve, reject) => {
+      this.loadAndAuthorize((auth) => {
+        const sheets = google.sheets({ version: "v4", auth });
+        sheets.spreadsheets.values.get(
+          {
+            spreadsheetId: this.spreadsheetId,
+            range: `${sheetName}!A1:A`,
+          },
+          (err, res) => {
+            if (err) reject("The API returned an error: " + err);
+            const rows = res.data.values;
+            if (rows.length) {
+              resolve(rows.length);
+            } else {
+              resolve(0);
+            }
+          }
+        );
+      });
+    });
+  }
 }
 
 export default GoogleSheetsAPI;
 
-// function main() {
-//   const credentialsPath = "credentials.json";
-//   const tokenPath = "token.json";
-//   const spreadsheetId = "1vhIxaHDq15uLbBlTCUEy1lm8uZULBUdKwgyqgquBGJA"; // Replace with your spreadsheet ID
-
-//   const googleSheets = new GoogleSheetsAPI(
-//     credentialsPath,
-//     tokenPath,
-//     spreadsheetId
-//   );
+// async function main() {
+//   const googleSheets = new GoogleSheetsAPI();
 
 //   // Define the range and values you want to append
-//   const range = "Sheet1";
-//   const values = [
-//     ["New", "Data"],
-//     ["Appending", "to", "Google", "Sheets", "API"],
-//   ];
+//   // const range = "data!A2:C`;
 
 //   // Append the data to the sheet
-//   googleSheets.addData(range, values);
+//   const lastRow = await googleSheets.getLastRow("data");
+
+//   const range = `data!M2:M${lastRow}`;
+//   const allData = await googleSheets.getAllData(range);
+
+//   console.log(allData.flat());
 // }
 
 // main();
