@@ -297,27 +297,32 @@ async function scraperProcess(page, browser, pageNum, domain) {
         console.log(bike);
 
         if (!checkIfBikeExist(BIKES, bike)) {
-          BIKES.push(bike);
-          await addBikeToSheet([
-            [
-              bike.id,
-              bike.bikeName,
-              bike.listingType,
-              bike.brand,
-              bike.engineCapacity,
-              bike.classification,
-              bike.regDate,
-              bike.COEexpiryDate.match(/\d{2}\/\d{2}\/\d{4}/)[0],
-              bike.milleage,
-              bike.noOfOwners,
-              bike.typeOfVehicle,
-              bike.price,
-              bike.permalink,
-              bike.postedOn,
-              bike.address,
-              JSON.stringify(bike.contacts),
-            ],
-          ]);
+          try {
+            await addBikeToSheet([
+              [
+                bike.id,
+                bike.bikeName,
+                bike.listingType,
+                bike.brand,
+                bike.engineCapacity,
+                bike.classification,
+                bike.regDate,
+                bike.COEexpiryDate.match(/\d{2}\/\d{2}\/\d{4}/)[0],
+                bike.milleage,
+                bike.noOfOwners,
+                bike.typeOfVehicle,
+                bike.price,
+                bike.permalink,
+                bike.postedOn,
+                bike.address,
+                JSON.stringify(bike.contacts),
+              ],
+            ]);
+            BIKES.push(bike);
+          } catch (error) {
+            console.log("Pushing to sheet went wrong: ", error);
+          }
+
           // await page.screenshot({
           //   path: `./screenshots/screenshot-${pageNum}-${index + 1}.png`,
           // });
