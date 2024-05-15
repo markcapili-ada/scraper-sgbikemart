@@ -2,3 +2,4 @@
 node_modules
 bikes.json
 bikes(page1-9).json
+.env
