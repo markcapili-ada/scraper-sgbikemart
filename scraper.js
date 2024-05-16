@@ -7,13 +7,16 @@ var BIKES = [];
 async function runScraperProcess() {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
-    // args: [
-    //   // "--disable-setuid-sandbox",
-    //   // "--no-sandbox",
-    //   // "--single-process",
-    //   // "--no-zygote",
-    //   "--disable-features=site-per-process",
-    // ],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-first-run",
+      "--no-zygote",
+      "--single-process",
+      "--disable-extensions",
+    ],
     headless: "new",
     executablePath:
       process.env.NODE_ENV === "production"
