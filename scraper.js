@@ -175,8 +175,6 @@ async function scraperProcess(page, pageNum, domain, browser) {
           });
         } catch (error) {
           console.log("Error navigating on a page: ", error);
-          page = await browser.newPage();
-          await page.setViewport({ width: 1080, height: 1024 });
           gotoBikePageSuccess = false;
           continue;
         }
@@ -366,7 +364,6 @@ async function scraperProcess(page, pageNum, domain, browser) {
         }
 
         gotoBikePageSuccess = true;
-        await page.close();
       } catch (error) {
         console.log("Error on element data fetch: ", error);
         gotoBikePageSuccess = false;
