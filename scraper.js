@@ -7,13 +7,14 @@ var BIKES = [];
 async function runScraperProcess() {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
-    args: [
-      // "--disable-setuid-sandbox",
-      // "--no-sandbox",
-      // "--single-process",
-      // "--no-zygote",
-      "--disable-features=site-per-process",
-    ],
+    // args: [
+    //   // "--disable-setuid-sandbox",
+    //   // "--no-sandbox",
+    //   // "--single-process",
+    //   // "--no-zygote",
+    //   "--disable-features=site-per-process",
+    // ],
+    headless: true,
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETER_EXECUTABLE_PATH
@@ -50,7 +51,7 @@ async function runScraperProcess() {
         contacts: JSON.parse(bike[16]),
       };
     });
-    for (let pageNum = 15; pageNum <= 30; pageNum++) {
+    for (let pageNum = 19; pageNum <= 30; pageNum++) {
       let success = false;
 
       while (!success) {
