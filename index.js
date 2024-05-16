@@ -10,7 +10,27 @@ const app = express();
 const port = 3000;
 
 app.get("/", async (req, res) => {
-  res.send("Hello World!");
+  res.send(`
+    <html>
+      <body>
+        <button onclick="fetch('/run').then(response => response.text()).then(alert)">Click me</button>
+      </body>
+    </html>
+  `);
+});
+
+app.get("/run", async (req, res) => {
+  // Your puppeteer code here
+  // ...
+  await runScraperProcess();
+  res.send("Function run successfully!");
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
+
+async function runScraperProcess() {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
     args: [
@@ -72,13 +92,7 @@ app.get("/", async (req, res) => {
   }
 
   await browser.close();
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
-
-(async () => {})();
+}
 
 async function scraperProcess(page, browser, pageNum, domain) {
   page = await browser.newPage();
