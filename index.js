@@ -12,7 +12,18 @@ const port = 3000;
 app.get("/", async (req, res) => {
   res.send("Hello World!");
   // Launch the browser and open a new blank page
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: [
+      "--disable-setuid-sandbox",
+      "--no-sandbox",
+      "--single-process",
+      "--no-zygote",
+    ],
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
+  });
   var page = await browser.newPage();
 
   // Navigate the page to a URL
