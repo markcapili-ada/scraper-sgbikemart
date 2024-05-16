@@ -50,7 +50,7 @@ async function runScraperProcess() {
         contacts: JSON.parse(bike[16]),
       };
     });
-    for (let pageNum = 1; pageNum <= 30; pageNum++) {
+    for (let pageNum = 13; pageNum <= 30; pageNum++) {
       let success = false;
 
       while (!success) {
@@ -170,13 +170,13 @@ async function scraperProcess(page, pageNum, domain, browser) {
         }
         await page.waitForTimeout(3000);
         try {
-          page = await browser.newPage();
-          await page.setViewport({ width: 1080, height: 1024 });
           await page.goto(domain + usedBikesRefs[index].href, {
             timeout: 10000,
           });
         } catch (error) {
           console.log("Error navigating on a page: ", error);
+          page = await browser.newPage();
+          await page.setViewport({ width: 1080, height: 1024 });
           gotoBikePageSuccess = false;
           continue;
         }
