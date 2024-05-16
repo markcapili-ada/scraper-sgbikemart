@@ -156,8 +156,7 @@ async function scraperProcess(page, pageNum, domain) {
 
     while (!gotoBikePageSuccess) {
       // await page.close();
-      // page = await browser.newPage();
-      // await page.setViewport({ width: 1080, height: 1024 });
+
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
         if (
@@ -172,8 +171,10 @@ async function scraperProcess(page, pageNum, domain) {
         }
         await page.waitForTimeout(3000);
         try {
+          page = await browser.newPage();
+          await page.setViewport({ width: 1080, height: 1024 });
           await page.goto(domain + usedBikesRefs[index].href, {
-            timeout: 30000,
+            timeout: 10000,
           });
         } catch (error) {
           console.log("Error navigating on a page: ", error);
@@ -368,9 +369,6 @@ async function scraperProcess(page, pageNum, domain) {
         gotoBikePageSuccess = true;
       } catch (error) {
         console.log("Error on element data fetch: ", error);
-        await page.close();
-        page = await browser.newPage();
-        await page.setViewport({ width: 1080, height: 1024 });
         gotoBikePageSuccess = false;
       }
     }
