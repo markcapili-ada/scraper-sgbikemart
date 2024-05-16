@@ -158,6 +158,7 @@ async function scraperProcess(page, pageNum, domain) {
     while (!gotoBikePageSuccess) {
       await page.close();
       page = await browser.newPage();
+      await page.setViewport({ width: 1080, height: 1024 });
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
         if (
@@ -175,7 +176,6 @@ async function scraperProcess(page, pageNum, domain) {
         await page.goto(domain + usedBikesRefs[index].href, {
           timeout: 30000,
         });
-        await page.setViewport({ width: 1080, height: 1024 });
 
         await page.waitForSelector(bikeName);
         var bikeNameData = await page.$eval(
