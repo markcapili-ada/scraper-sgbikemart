@@ -154,8 +154,10 @@ async function scraperProcess(page, pageNum, domain) {
   for (let index = 0; index < 20; index++) {
     console.log(`Page: ${pageNum} Item: ${index + 1}`);
     var gotoBikePageSuccess = false;
-    // page = await browser.newPage();
+
     while (!gotoBikePageSuccess) {
+      await page.close();
+      page = await browser.newPage();
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
         if (
