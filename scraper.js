@@ -21,8 +21,8 @@ async function runScraperProcess() {
         : puppeteer.executablePath(),
   });
   // const browser = await puppeteer.launch();
-  var page = await browser.newPage();
-  await page.setViewport({ width: 1080, height: 1024 });
+  // var page = await browser.newPage();
+  // await page.setViewport({ width: 1080, height: 1024 });
   // Navigate the page to a URL
   const domain = "https://sgbikemart.com.sg";
 
@@ -51,12 +51,16 @@ async function runScraperProcess() {
         contacts: JSON.parse(bike[16]),
       };
     });
-    for (let pageNum = 21; pageNum <= 30; pageNum++) {
+    for (let pageNum = 22; pageNum <= 30; pageNum++) {
       let success = false;
 
       while (!success) {
         try {
+          await new Promise((r) => setTimeout(r, 10000));
+          var page = await browser.newPage();
+          await page.setViewport({ width: 1080, height: 1024 });
           await scraperProcess(page, pageNum, domain, browser);
+          page.close();
           success = true;
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
@@ -75,7 +79,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
   await new Promise((r) => setTimeout(r, 3000));
   await page.goto(
     `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
-    { waitUntil: "domcontentloaded" }
+    { waitUntil: "networkidle2", timeout: 60000 }
   );
 
   // Set screen size
@@ -172,7 +176,8 @@ async function scraperProcess(page, pageNum, domain, browser) {
         await new Promise((r) => setTimeout(r, 3000));
         try {
           await page.goto(domain + usedBikesRefs[index].href, {
-            waitUntil: "domcontentloaded",
+            waitUntil: "networkidle2",
+            timeout: 60000,
           });
         } catch (error) {
           console.log("Error navigating on a page: ", error);
@@ -180,92 +185,21 @@ async function scraperProcess(page, pageNum, domain, browser) {
           continue;
         }
 
-        await page.waitForSelector(bikeName);
-        var bikeNameData = await page.$eval(
-          bikeName,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(listingType);
-        var listingTypeData = await page.$eval(
-          listingType,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(brand);
-        var brandData = await page.$eval(
-          brand,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(engineCapacity);
-        var engineCapacityData = await page.$eval(
-          engineCapacity,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(classification);
-        var classificationData = await page.$eval(
-          classification,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(regDate);
-        var regDateData = await page.$eval(
-          regDate,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(COEexpiryDate);
-        var COEexpiryDateData = await page.$eval(
-          COEexpiryDate,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(milleage);
-        var milleageData = await page.$eval(
-          milleage,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(noOfOwners);
-        var noOfOwnersData = await page.$eval(
-          noOfOwners,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(typeOfVehicle);
-        var typeOfVehicleData = await page.$eval(
-          typeOfVehicle,
-          (element) => element.textContent
-        );
-
-        await page.waitForSelector(price);
-        var priceData = await page.$eval(
-          price,
-          (element) => element.textContent
-        );
-
+        var bikeNameData = await getTextContent(page, bikeName);
+        var listingTypeData = await getTextContent(page, listingType);
+        var brandData = await getTextContent(page, brand);
+        var engineCapacityData = await getTextContent(page, engineCapacity);
+        var classificationData = await getTextContent(page, classification);
+        var regDateData = await getTextContent(page, regDate);
+        var COEexpiryDateData = await getTextContent(page, COEexpiryDate);
+        var milleageData = await getTextContent(page, milleage);
+        var noOfOwnersData = await getTextContent(page, noOfOwners);
+        var typeOfVehicleData = await getTextContent(page, typeOfVehicle);
+        var priceData = await getTextContent(page, price);
         var addressData = "Not Available";
-        try {
-          await page.waitForSelector(address, { timeout: 5000 });
-          addressData = await page.$eval(
-            address,
-            (element) => element.textContent
-          );
-        } catch (error) {
-          console.log(error);
-        }
+        addressData = await getTextContent(page, address);
         var companyNameData = "Not Available";
-        try {
-          await page.waitForSelector(companyName, { timeout: 5000 });
-          companyNameData = await page.$eval(
-            companyName,
-            (element) => element.textContent
-          );
-        } catch (error) {
-          console.log(error);
-        }
+        companyNameData = await getTextContent(page, companyName);
 
         // FOR PHONE NUMBERS:
 
@@ -396,6 +330,19 @@ function checkIfBikePermalinkExist(bikes, permalink) {
     }
   }
   return false;
+}
+
+async function getTextContent(page, selector) {
+  try {
+    await page.waitForSelector(selector, { timeout: 5000 });
+    return await page.$eval(selector, (element) => element.textContent.trim());
+  } catch (error) {
+    console.error(
+      `Error fetching text content for selector: ${selector}`,
+      error
+    );
+    return null;
+  }
 }
 
 export default runScraperProcess;
