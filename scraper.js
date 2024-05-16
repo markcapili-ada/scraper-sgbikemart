@@ -265,8 +265,9 @@ async function scraperProcess(page, pageNum, domain) {
         // FOR PHONE NUMBERS:
 
         var contacts = [];
-        try {
-          for (let i = 1; i <= 2; i++) {
+
+        for (let i = 1; i <= 2; i++) {
+          try {
             var isAddressDataAvailable =
               addressData === "Not Available" ? 1 : 3;
 
@@ -296,9 +297,9 @@ async function scraperProcess(page, pageNum, domain) {
               contactName: contactNameData.replace(/\n/g, ""),
               contactNumber: contactNumberData,
             });
+          } catch (error) {
+            console.log("Error on phone numbers: ", error);
           }
-        } catch (error) {
-          console.log(error);
         }
 
         // FOR PHONE NUMBERS(end)
