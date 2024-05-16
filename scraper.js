@@ -50,7 +50,7 @@ async function runScraperProcess() {
         contacts: JSON.parse(bike[16]),
       };
     });
-    for (let pageNum = 13; pageNum <= 30; pageNum++) {
+    for (let pageNum = 15; pageNum <= 30; pageNum++) {
       let success = false;
 
       while (!success) {
@@ -74,8 +74,21 @@ async function scraperProcess(page, pageNum, domain, browser) {
   await new Promise((r) => setTimeout(r, 3000));
   await page.goto(
     `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
-    { timeout: 30000 }
+    { waitUntil: "domcontentloaded" }
   );
+
+  await page.setRequestInterception(true);
+  await page.on("request", (request) => {
+    if (
+      ["image", "stylesheet", "font", "script"].indexOf(
+        request.resourceType()
+      ) !== -1
+    ) {
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
 
   // Set screen size
 
@@ -171,7 +184,19 @@ async function scraperProcess(page, pageNum, domain, browser) {
         await new Promise((r) => setTimeout(r, 3000));
         try {
           await page.goto(domain + usedBikesRefs[index].href, {
-            timeout: 10000,
+            waitUntil: "domcontentloaded",
+          });
+          await page.setRequestInterception(true);
+          await page.on("request", (request) => {
+            if (
+              ["image", "stylesheet", "font", "script"].indexOf(
+                request.resourceType()
+              ) !== -1
+            ) {
+              request.abort();
+            } else {
+              request.continue();
+            }
           });
         } catch (error) {
           console.log("Error navigating on a page: ", error);
