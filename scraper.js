@@ -55,7 +55,7 @@ async function runScraperProcess() {
 
       while (!success) {
         try {
-          await scraperProcess(page, pageNum, domain);
+          await scraperProcess(page, pageNum, domain, browser);
           success = true;
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
@@ -70,7 +70,7 @@ async function runScraperProcess() {
   await browser.close();
 }
 
-async function scraperProcess(page, pageNum, domain) {
+async function scraperProcess(page, pageNum, domain, browser) {
   // page = await browser.newPage();
   await page.waitForTimeout(3000);
   await page.goto(
