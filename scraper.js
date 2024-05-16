@@ -54,7 +54,7 @@ async function runScraperProcess() {
 
       while (!success) {
         try {
-          await scraperProcess(page, browser, pageNum, domain);
+          await scraperProcess(page, pageNum, domain);
           success = true;
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
@@ -69,8 +69,8 @@ async function runScraperProcess() {
   await browser.close();
 }
 
-async function scraperProcess(page, browser, pageNum, domain) {
-  page = await browser.newPage();
+async function scraperProcess(page, pageNum, domain) {
+  // page = await browser.newPage();
   await page.waitForTimeout(3000);
   await page.goto(
     `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
@@ -153,7 +153,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
   for (let index = 0; index < 20; index++) {
     console.log(`Page: ${pageNum} Item: ${index + 1}`);
     var gotoBikePageSuccess = false;
-    page = await browser.newPage();
+    // page = await browser.newPage();
     while (!gotoBikePageSuccess) {
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
