@@ -246,6 +246,7 @@ async function scraperProcess(page, pageNum, domain) {
           price,
           (element) => element.textContent
         );
+
         var addressData = "Not Available";
         try {
           await page.waitForSelector(address, { timeout: 5000 });
@@ -366,7 +367,10 @@ async function scraperProcess(page, pageNum, domain) {
 
         gotoBikePageSuccess = true;
       } catch (error) {
-        console.log(error);
+        console.log("Error on element data fetch: ", error);
+        await page.close();
+        page = await browser.newPage();
+        await page.setViewport({ width: 1080, height: 1024 });
         gotoBikePageSuccess = false;
       }
     }
