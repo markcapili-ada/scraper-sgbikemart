@@ -2,9 +2,15 @@ import puppeteer from "puppeteer";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import GoogleSheetsAPI from "./GoogleSheetsAPI.js";
+import express from "express";
 const googleSheets = new GoogleSheetsAPI();
 var BIKES = [];
-(async () => {
+
+const app = express();
+const port = 3000;
+
+app.get("/", async (req, res) => {
+  res.send("Hello World!");
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch();
   var page = await browser.newPage();
@@ -55,7 +61,13 @@ var BIKES = [];
   }
 
   await browser.close();
-})();
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
+
+(async () => {})();
 
 async function scraperProcess(page, browser, pageNum, domain) {
   page = await browser.newPage();
