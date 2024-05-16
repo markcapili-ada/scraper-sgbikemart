@@ -63,11 +63,10 @@ async function runScraperProcess() {
         }
       }
     }
+    await browser.close();
   } catch (error) {
     console.log("Error on main loop:  ", error);
   }
-
-  await browser.close();
 }
 
 async function scraperProcess(page, pageNum, domain, browser) {
@@ -367,6 +366,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
         }
 
         gotoBikePageSuccess = true;
+        await page.close();
       } catch (error) {
         console.log("Error on element data fetch: ", error);
         gotoBikePageSuccess = false;
