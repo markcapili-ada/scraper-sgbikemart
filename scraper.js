@@ -14,7 +14,7 @@ async function runScraperProcess() {
     //   // "--no-zygote",
     //   "--disable-features=site-per-process",
     // ],
-    headless: true,
+    headless: "new",
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETER_EXECUTABLE_PATH
@@ -51,7 +51,7 @@ async function runScraperProcess() {
         contacts: JSON.parse(bike[16]),
       };
     });
-    for (let pageNum = 19; pageNum <= 30; pageNum++) {
+    for (let pageNum = 21; pageNum <= 30; pageNum++) {
       let success = false;
 
       while (!success) {
