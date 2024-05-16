@@ -77,19 +77,6 @@ async function scraperProcess(page, pageNum, domain, browser) {
     { waitUntil: "domcontentloaded" }
   );
 
-  await page.setRequestInterception(true);
-  await page.on("request", (request) => {
-    if (
-      ["image", "stylesheet", "font", "script"].indexOf(
-        request.resourceType()
-      ) !== -1
-    ) {
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
-
   // Set screen size
 
   var usedBikesRefs = [];
@@ -185,18 +172,6 @@ async function scraperProcess(page, pageNum, domain, browser) {
         try {
           await page.goto(domain + usedBikesRefs[index].href, {
             waitUntil: "domcontentloaded",
-          });
-          await page.setRequestInterception(true);
-          await page.on("request", (request) => {
-            if (
-              ["image", "stylesheet", "font", "script"].indexOf(
-                request.resourceType()
-              ) !== -1
-            ) {
-              request.abort();
-            } else {
-              request.continue();
-            }
           });
         } catch (error) {
           console.log("Error navigating on a page: ", error);
