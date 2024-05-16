@@ -156,8 +156,8 @@ async function scraperProcess(page, pageNum, domain) {
     var gotoBikePageSuccess = false;
 
     while (!gotoBikePageSuccess) {
-      await page.close();
-      page = await browser.newPage();
+      // await page.close();
+      // page = await browser.newPage();
       await page.setViewport({ width: 1080, height: 1024 });
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
