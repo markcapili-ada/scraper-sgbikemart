@@ -1,6 +1,4 @@
 import { google } from "googleapis";
-import fs from "fs";
-import readline from "readline";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -87,7 +85,7 @@ class GoogleSheetsAPI {
   }
 
   // Function to append data to a Google Spreadsheet
-  appendData(auth, range, values) {
+  async appendData(auth, range, values) {
     const sheets = google.sheets({ version: "v4", auth });
     const valueInputOption = "RAW";
     const resource = { values: values };
@@ -117,7 +115,7 @@ class GoogleSheetsAPI {
   }
 
   // Function to call appendData with specific range and values
-  addData(range, values) {
+  async addData(range, values) {
     this.loadAndAuthorize((auth) => {
       this.appendData(auth, range, values);
     });

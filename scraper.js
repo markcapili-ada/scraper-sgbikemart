@@ -64,7 +64,7 @@ async function runScraperProcess() {
       }
     }
   } catch (error) {
-    console.log(error);
+    console.log("Error on main loop:  ", error);
   }
 
   await browser.close();
@@ -85,7 +85,7 @@ async function scraperProcess(page, pageNum, domain) {
     var selector1 = `body > section.main-content > div > div > div.col-lg-9 > div:nth-child(${
       3 + index
     }) > div > div.col-md-9.d-flex.flex-column.align-content-end > div.card-body.pb-2.pe-2.d-flex > div > div.col-3.text-end.d-flex.flex-column > div.d-block.w-100 > a`;
-    console.log(selector1);
+
     const href = await page.$eval(selector1, (element) =>
       element.getAttribute("href")
     );
@@ -171,10 +171,15 @@ async function scraperProcess(page, pageNum, domain) {
           continue;
         }
         await page.waitForTimeout(3000);
-
-        await page.goto(domain + usedBikesRefs[index].href, {
-          timeout: 30000,
-        });
+        try {
+          await page.goto(domain + usedBikesRefs[index].href, {
+            timeout: 30000,
+          });
+        } catch (error) {
+          console.log("Error navigating on a page: ", error);
+          gotoBikePageSuccess = false;
+          continue;
+        }
 
         await page.waitForSelector(bikeName);
         var bikeNameData = await page.$eval(
@@ -372,7 +377,7 @@ async function addBikeToSheet(values) {
   // Define the range and values you want to append
   const range = "data";
   // Append the data to the sheet
-  googleSheets.addData(range, values);
+  await googleSheets.addData(range, values);
 }
 
 function checkIfBikeExist(bikes, bike) {
