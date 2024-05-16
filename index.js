@@ -99,7 +99,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
   await page.waitForTimeout(3000);
   await page.goto(
     `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
-    { timeout: 5000 }
+    { timeout: 30000 }
   );
 
   // Set screen size
