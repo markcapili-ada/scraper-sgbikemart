@@ -21,7 +21,7 @@ async function runScraperProcess() {
   });
   // const browser = await puppeteer.launch();
   var page = await browser.newPage();
-
+  await page.setViewport({ width: 1080, height: 1024 });
   // Navigate the page to a URL
   const domain = "https://sgbikemart.com.sg";
 
@@ -79,7 +79,6 @@ async function scraperProcess(page, pageNum, domain) {
   );
 
   // Set screen size
-  await page.setViewport({ width: 1080, height: 1024 });
 
   var usedBikesRefs = [];
   for (let index = 0; index < 20; index++) {
@@ -158,7 +157,7 @@ async function scraperProcess(page, pageNum, domain) {
     while (!gotoBikePageSuccess) {
       // await page.close();
       // page = await browser.newPage();
-      await page.setViewport({ width: 1080, height: 1024 });
+      // await page.setViewport({ width: 1080, height: 1024 });
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
         if (
