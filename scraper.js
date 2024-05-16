@@ -60,7 +60,7 @@ async function runScraperProcess() {
           var page = await browser.newPage();
           await page.setViewport({ width: 1080, height: 1024 });
           await scraperProcess(page, pageNum, domain, browser);
-          page.close();
+
           success = true;
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
@@ -84,6 +84,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
 
   // Set screen size
 
+  // GETTING ALL THE BIKES HREF
   var usedBikesRefs = [];
   for (let index = 0; index < 20; index++) {
     var selector1 = `body > section.main-content > div > div > div.col-lg-9 > div:nth-child(${
@@ -108,6 +109,8 @@ async function scraperProcess(page, pageNum, domain, browser) {
       postedOn: postedOnData.match(/\d{2}\/\d{2}\/\d{4}/)[0],
     });
   }
+
+  await page.close();
 
   console.log(usedBikesRefs);
   await new Promise((r) => setTimeout(r, 3000));
@@ -175,6 +178,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
         }
         await new Promise((r) => setTimeout(r, 3000));
         try {
+          var page = await browser.newPage();
           await page.goto(domain + usedBikesRefs[index].href, {
             waitUntil: "networkidle2",
             timeout: 60000,
@@ -299,6 +303,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
         }
 
         gotoBikePageSuccess = true;
+        await page.close();
       } catch (error) {
         console.log("Error on element data fetch: ", error);
         gotoBikePageSuccess = false;
