@@ -195,7 +195,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
         await page.waitForTimeout(3000);
 
         await page.goto(domain + usedBikesRefs[index].href, {
-          timeout: 10000,
+          timeout: 30000,
         });
         await page.setViewport({ width: 1080, height: 1024 });
 
