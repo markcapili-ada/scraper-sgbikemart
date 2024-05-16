@@ -8,10 +8,10 @@ async function runScraperProcess() {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
     args: [
-      "--disable-setuid-sandbox",
-      "--no-sandbox",
-      "--single-process",
-      "--no-zygote",
+      // "--disable-setuid-sandbox",
+      // "--no-sandbox",
+      // "--single-process",
+      // "--no-zygote",
       "--disable-features=site-per-process",
     ],
     executablePath:
