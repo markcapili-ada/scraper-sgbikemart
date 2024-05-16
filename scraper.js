@@ -71,7 +71,7 @@ async function runScraperProcess() {
 
 async function scraperProcess(page, pageNum, domain, browser) {
   // page = await browser.newPage();
-  await page.waitForTimeout(3000);
+  await new Promise((r) => setTimeout(r, 3000));
   await page.goto(
     `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
     { timeout: 30000 }
@@ -105,7 +105,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
   }
 
   console.log(usedBikesRefs);
-  await page.waitForTimeout(3000);
+  await new Promise((r) => setTimeout(r, 3000));
 
   var bikeName =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-header.py-4 > h2";
@@ -168,7 +168,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
           gotoBikePageSuccess = true;
           continue;
         }
-        await page.waitForTimeout(3000);
+        await new Promise((r) => setTimeout(r, 3000));
         try {
           await page.goto(domain + usedBikesRefs[index].href, {
             timeout: 10000,
@@ -280,7 +280,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
               { timeout: 5000 }
             );
             await page.click(clickToViewContact(isAddressDataAvailable, i));
-            await page.waitForTimeout(3000);
+            await new Promise((r) => setTimeout(r, 3000));
 
             await page.waitForSelector(
               contactNumber(isAddressDataAvailable, i),
