@@ -15,8 +15,7 @@ var BIKES = [];
   try {
     // MAIN LOOP
     const lastRow = await googleSheets.getLastRow("data");
-    var allData = await googleSheets.getAllData(`data!A2:P${lastRow}`);
-
+    var allData = await googleSheets.getAllData(`data!A2:Q${lastRow + 1}`);
     BIKES = allData.map((bike) => {
       return {
         id: bike[0],
@@ -34,10 +33,10 @@ var BIKES = [];
         permalink: bike[12],
         postedOn: bike[13],
         address: bike[14],
-        contacts: JSON.parse(bike[15]),
+        companyName: bike[15],
+        contacts: JSON.parse(bike[16]),
       };
     });
-    console.log(BIKES);
     for (let pageNum = 1; pageNum <= 30; pageNum++) {
       let success = false;
 
@@ -135,6 +134,9 @@ async function scraperProcess(page, browser, pageNum, domain) {
   const contactName = (addressAvailable, numContact) => {
     return `#bike-contacts > div.card-body.p-0.pt-2 > div:nth-child(${addressAvailable}) > table > tbody > tr:nth-child(${numContact}) > td:nth-child(1)`;
   };
+
+  var companyName =
+    "#bike-contacts > div.card-body.p-0.pt-2 > table > tbody > tr:nth-child(1) > td:nth-child(2) > a.clear.text-start.company-name > strong";
 
   for (let index = 0; index < 20; index++) {
     console.log(`Page: ${pageNum} Item: ${index + 1}`);
@@ -235,6 +237,16 @@ async function scraperProcess(page, browser, pageNum, domain) {
         } catch (error) {
           console.log(error);
         }
+        var companyNameData = "Not Available";
+        try {
+          await page.waitForSelector(companyName, { timeout: 5000 });
+          companyNameData = await page.$eval(
+            companyName,
+            (element) => element.textContent
+          );
+        } catch (error) {
+          console.log(error);
+        }
 
         // FOR PHONE NUMBERS:
 
@@ -292,6 +304,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
           permalink: domain + usedBikesRefs[index].href,
           postedOn: usedBikesRefs[index].postedOn,
           address: addressData.replace(/\n/g, ""),
+          companyName: companyNameData,
           contacts: contacts,
         };
         console.log(bike);
@@ -315,6 +328,7 @@ async function scraperProcess(page, browser, pageNum, domain) {
                 bike.permalink,
                 bike.postedOn,
                 bike.address,
+                bike.companyName,
                 JSON.stringify(bike.contacts),
               ],
             ]);

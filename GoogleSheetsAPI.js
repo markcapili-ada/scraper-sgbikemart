@@ -136,8 +136,12 @@ class GoogleSheetsAPI {
           (err, res) => {
             if (err) reject("The API returned an error: " + err);
             const rows = res.data.values;
-            if (rows.length) {
-              resolve(rows);
+            if (rows) {
+              if (rows.length) {
+                resolve(rows);
+              } else {
+                resolve([]);
+              }
             } else {
               resolve([]);
             }
