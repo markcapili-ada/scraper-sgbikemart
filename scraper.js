@@ -203,10 +203,8 @@ async function scraperProcess(page, pageNum, domain, browser) {
         var noOfOwnersData = await getTextContent(page, noOfOwners);
         var typeOfVehicleData = await getTextContent(page, typeOfVehicle);
         var priceData = await getTextContent(page, price);
-        var addressData = "Not Available";
-        addressData = await getTextContent(page, address);
-        var companyNameData = "Not Available";
-        companyNameData = await getTextContent(page, companyName);
+        var addressData = await getTextContent(page, address);
+        var companyNameData = await getTextContent(page, companyName);
 
         // FOR PHONE NUMBERS:
 
@@ -349,7 +347,7 @@ async function getTextContent(page, selector) {
       `Error fetching text content for selector: ${selector}`,
       error
     );
-    return null;
+    return "Not Available";
   }
 }
 
