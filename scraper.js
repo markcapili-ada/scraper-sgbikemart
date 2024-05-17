@@ -65,8 +65,10 @@ async function runScraperProcess() {
           await scraperProcess(page, pageNum, domain, browser);
 
           success = true;
+          await page.close();
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
+          await page.close();
           success = false;
         }
       }
@@ -189,6 +191,7 @@ async function scraperProcess(page, pageNum, domain, browser) {
         } catch (error) {
           console.log("Error navigating on a page: ", error);
           gotoBikePageSuccess = false;
+          await page.close();
           continue;
         }
 
@@ -302,7 +305,6 @@ async function scraperProcess(page, pageNum, domain, browser) {
         } else {
           console.log("Bike already exists in the database 2");
         }
-
         gotoBikePageSuccess = true;
         await page.close();
       } catch (error) {
