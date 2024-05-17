@@ -52,6 +52,7 @@ async function runScraperProcess() {
         address: bike[14],
         companyName: bike[15],
         contacts: JSON.parse(bike[16]),
+        scrapedOn: bike[17],
       };
     });
     for (let pageNum = 1; pageNum <= 10; pageNum++) {
@@ -247,6 +248,9 @@ async function scraperProcess(usedBikesRefs, pageNum, domain, browser) {
                 bike.address,
                 bike.companyName,
                 JSON.stringify(bike.contacts),
+                new Date().toLocaleString("en-US", {
+                  timeZone: "Asia/Singapore",
+                }),
               ],
             ]);
             BIKES.push(bike);
