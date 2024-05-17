@@ -61,7 +61,7 @@ async function runScraperProcess() {
         try {
           await new Promise((r) => setTimeout(r, 10000));
           var usedBikesRefs = await getHrefs(browser, pageNum);
-          await scraperProcess(usedBikesRefs, domain, browser);
+          await scraperProcess(usedBikesRefs, pageNum, domain, browser);
           success = true;
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
@@ -75,7 +75,7 @@ async function runScraperProcess() {
   }
 }
 
-async function scraperProcess(usedBikesRefs, domain, browser) {
+async function scraperProcess(usedBikesRefs, pageNum, domain, browser) {
   var page;
   var bikeName =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-header.py-4 > h2";
@@ -139,6 +139,7 @@ async function scraperProcess(usedBikesRefs, domain, browser) {
         await new Promise((r) => setTimeout(r, 3000));
         try {
           page = await browser.newPage();
+          await page.setViewport({ width: 1080, height: 1024 });
           await page.goto(domain + usedBikesRefs[index].href, {
             waitUntil: "networkidle2",
             timeout: 60000,
