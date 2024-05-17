@@ -60,8 +60,6 @@ async function runScraperProcess() {
       while (!success) {
         try {
           await new Promise((r) => setTimeout(r, 10000));
-          await page.setViewport({ width: 1080, height: 1024 });
-
           var usedBikesRefs = await getHrefs(browser, pageNum);
           await scraperProcess(usedBikesRefs, domain, browser);
           success = true;
@@ -78,6 +76,7 @@ async function runScraperProcess() {
 }
 
 async function scraperProcess(usedBikesRefs, domain, browser) {
+  var page;
   var bikeName =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-header.py-4 > h2";
   var listingType =
@@ -139,7 +138,7 @@ async function scraperProcess(usedBikesRefs, domain, browser) {
         }
         await new Promise((r) => setTimeout(r, 3000));
         try {
-          var page = await browser.newPage();
+          page = await browser.newPage();
           await page.goto(domain + usedBikesRefs[index].href, {
             waitUntil: "networkidle2",
             timeout: 60000,
@@ -147,7 +146,6 @@ async function scraperProcess(usedBikesRefs, domain, browser) {
         } catch (error) {
           console.log("Error navigating on a page: ", error);
           gotoBikePageSuccess = false;
-          await page.close();
           continue;
         }
 
