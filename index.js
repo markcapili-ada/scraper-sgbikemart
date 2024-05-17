@@ -13,6 +13,7 @@ app.get("/", async (req, res) => {
       </body>
     </html>
   `);
+  console.log(`I got pinged`);
 });
 
 app.get("/run", async (req, res) => {
