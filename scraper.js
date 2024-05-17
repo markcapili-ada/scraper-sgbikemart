@@ -60,15 +60,13 @@ async function runScraperProcess() {
       while (!success) {
         try {
           await new Promise((r) => setTimeout(r, 10000));
-          var page = await browser.newPage();
           await page.setViewport({ width: 1080, height: 1024 });
-          await scraperProcess(page, pageNum, domain, browser);
 
+          var usedBikesRefs = await getHrefs(browser, pageNum);
+          await scraperProcess(usedBikesRefs, domain, browser);
           success = true;
-          await page.close();
         } catch (error) {
           console.log("Error in page number: ", pageNum, error);
-          await page.close();
           success = false;
         }
       }
@@ -79,47 +77,7 @@ async function runScraperProcess() {
   }
 }
 
-async function scraperProcess(page, pageNum, domain, browser) {
-  // page = await browser.newPage();
-  await new Promise((r) => setTimeout(r, 3000));
-  await page.goto(
-    `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
-    { waitUntil: "networkidle2", timeout: 60000 }
-  );
-
-  // Set screen size
-
-  // GETTING ALL THE BIKES HREF
-  var usedBikesRefs = [];
-  for (let index = 0; index < 20; index++) {
-    var selector1 = `body > section.main-content > div > div > div.col-lg-9 > div:nth-child(${
-      3 + index
-    }) > div > div.col-md-9.d-flex.flex-column.align-content-end > div.card-body.pb-2.pe-2.d-flex > div > div.col-3.text-end.d-flex.flex-column > div.d-block.w-100 > a`;
-
-    const href = await page.$eval(selector1, (element) =>
-      element.getAttribute("href")
-    );
-
-    var postedOn = `body > section.main-content > div > div > div.col-lg-9 > div:nth-child(${
-      index + 3
-    }) > div > div.col-md-9.d-flex.flex-column.align-content-end > div.card-body.pb-2.pe-2.d-flex > div > div.col-9.d-flex > div > div:nth-child(6) > div > div:nth-child(1) > small`;
-
-    await page.waitForSelector(postedOn);
-    var postedOnData = await page.$eval(
-      postedOn,
-      (element) => element.textContent
-    );
-    usedBikesRefs.push({
-      href: href,
-      postedOn: postedOnData.match(/\d{2}\/\d{2}\/\d{4}/)[0],
-    });
-  }
-
-  await page.close();
-
-  console.log(usedBikesRefs);
-  await new Promise((r) => setTimeout(r, 3000));
-
+async function scraperProcess(usedBikesRefs, domain, browser) {
   var bikeName =
     "body > section.main-content > div > div > div.col-lg-9 > div.row.g-3 > div:nth-child(2) > div > div.card-header.py-4 > h2";
   var listingType =
@@ -167,8 +125,6 @@ async function scraperProcess(page, pageNum, domain, browser) {
     var gotoBikePageSuccess = false;
 
     while (!gotoBikePageSuccess) {
-      // await page.close();
-
       try {
         console.log(`${domain}${usedBikesRefs[index].href}`);
         if (
@@ -351,6 +307,43 @@ async function getTextContent(page, selector) {
     );
     return "Not Available";
   }
+}
+
+async function getHrefs(browser, pageNum) {
+  var page = await browser.newPage();
+  await page.setViewport({ width: 1080, height: 1024 });
+  await page.goto(
+    `https://sgbikemart.com.sg/listing/usedbikes/listing/?page=${pageNum}&sort_by=newest`,
+    { waitUntil: "networkidle2", timeout: 60000 }
+  );
+
+  // GETTING ALL THE BIKES HREF
+  var usedBikesRefs = [];
+  for (let index = 0; index < 20; index++) {
+    var selector1 = `body > section.main-content > div > div > div.col-lg-9 > div:nth-child(${
+      3 + index
+    }) > div > div.col-md-9.d-flex.flex-column.align-content-end > div.card-body.pb-2.pe-2.d-flex > div > div.col-3.text-end.d-flex.flex-column > div.d-block.w-100 > a`;
+
+    const href = await page.$eval(selector1, (element) =>
+      element.getAttribute("href")
+    );
+
+    var postedOn = `body > section.main-content > div > div > div.col-lg-9 > div:nth-child(${
+      index + 3
+    }) > div > div.col-md-9.d-flex.flex-column.align-content-end > div.card-body.pb-2.pe-2.d-flex > div > div.col-9.d-flex > div > div:nth-child(6) > div > div:nth-child(1) > small`;
+
+    await page.waitForSelector(postedOn);
+    var postedOnData = await page.$eval(
+      postedOn,
+      (element) => element.textContent
+    );
+    usedBikesRefs.push({
+      href: href,
+      postedOn: postedOnData.match(/\d{2}\/\d{2}\/\d{4}/)[0],
+    });
+  }
+  await page.close();
+  return usedBikesRefs;
 }
 
 export default runScraperProcess;
