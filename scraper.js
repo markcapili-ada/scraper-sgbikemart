@@ -54,7 +54,7 @@ async function runScraperProcess() {
         contacts: JSON.parse(bike[16]),
       };
     });
-    for (let pageNum = 22; pageNum <= 30; pageNum++) {
+    for (let pageNum = 1; pageNum <= 10; pageNum++) {
       let success = false;
 
       while (!success) {
